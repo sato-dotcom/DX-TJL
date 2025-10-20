@@ -114,6 +114,40 @@ npm start
 相対パス解決やデータ階層の自動リンク処理によりエラーが表示される場合があります。
 これらは実行環境には影響しないため、レビューエラーは無視して開発を進めてください。
     
+### 開発環境設定（エイリアス）
+
+本プロジェクトでは import パスを簡潔にするため、Vite のエイリアスを設定しています。  
+そのため、`App.jsx` などから以下のように記述できます。
+
+```js
+import { Header } from 'components/Header.jsx';
+import { useProjects } from 'hooks/useProjects.js';
+import { getDateRangeAndHeaders } from 'utils/dateUtils.js';
+
+vite.config.js の設定
+
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      components: path.resolve(__dirname, './src/components'),
+      hooks: path.resolve(__dirname, './src/hooks'),
+      utils: path.resolve(__dirname, './src/utils'),
+      constants: path.resolve(__dirname, './src/constants'),
+    },
+  },
+});
+
+注意点
+• 	環境依存：この設定がないと components/... のような import は解決できません。
+→ 他の人が clone した場合は必ず vite.config.js を共有してください。
+• 	学習コスト：新しく参加する人には「エイリアスを使っている」ことを説明する必要があります。
+• 	移植性：もし別のビルド環境（例: Next.js, CRA）に移行する場合は、同様のエイリアス設定を追加する必要があります。
+
 
 ## 📜 ライセンス
 
