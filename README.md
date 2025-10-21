@@ -28,41 +28,52 @@
 
 ## 📂 フォルダ構成と概要
 
-src/
-├── App.css              # App.jsx 用スタイル
-├── App.jsx              # アプリのメインコンポーネント（ビュー切替）
-├── index.css            # グローバルスタイル
-├── main.jsx             # React エントリーポイント
-│
-├── assets/              # 静的ファイル（例: react.svg）
-│
-├── components/          # UIコンポーネント群
-│   ├── GanttView.jsx        # ガントチャート表示
-│   ├── Toolbar.jsx          # ツールバー
-│   ├── ExcelData.jsx        # 工事データ表（CSV由来）
-│   ├── Header.jsx           # ヘッダー（メニュー/タイトル）
-│   ├── IndividualView.jsx   # 個人別ビュー
-│   ├── KoujiView.jsx        # 工事一覧ビュー
-│   ├── ManpowerView.jsx     # 人員配置ビュー
-│   ├── ShainView.jsx        # 社員名簿ビュー
-│   └── common/
-│       └── ExcelHeader.jsx  # ガントチャート用テーブルヘッダー
-│
-├── constants/
-│   ├── initialData.js       # 初期データ（CSV形式）
-│   └── uiConstants.js       # UI関連定数
-│
-├── firebase/
-│   └── firebaseConfig.js    # Firestore / Auth 設定
-│
-├── hooks/
-│   ├── useProjects.js       # Firestore: projects データ取得/更新
-│   └── useShain.js          # Firestore: 社員リスト取得/更新
-│
-└── utils/
-    ├── dataUtils.js         # CSVパース/変換
-    ├── dateUtils.js         # 日付フォーマット/計算
-    └── exportUtils.js       # CSVエクスポート
+sDX-TJL/
+├── node_modules/
+├── public/
+├──.gitignore
+├──eslint.config.js
+├──index.html
+├──package.json
+├──package-lock.json
+├──vite.config.js
+└src/
+  │  App.css :App.jsx コンポーネントに適用されるスタイルシート。
+  │  App.jsx :アプリケーションのメインコンポーネント。 各画面（GanttView など）の表示を切り替えるルーターのような役割を持つ。
+  │  index.css :アプリケーション全体に適用されるグローバルなスタイルシート。
+  │  main.jsx :Reactアプリケーションのルートエントリーポイント。 ここで App コンポーネントがHTMLに描画される。
+  │  
+  ├─assets
+  │      react.svg :: 画像などの静的ファイル。
+  │      
+  ├─components
+  │  │  GanttView.jsx :ガントチャート本体
+  │  │  Toolbar.jsx :ツールバー
+  │  │  ExcelData.jsx :工程データを表示するテーブルの本体部分（行データ）のロジックとJSX
+  │  │  Header.jsx :アプリケーション全体のヘッダー。 画面を切り替えるメニューボタンやタイトルを表示する。
+  │  │  IndividualView.jsx :個人別日程表の表示ロジックとテーブル。
+  │  │  KoujiView.jsx :工事一覧表の表示ロジックとテーブル。
+  │  │  ManpowerView.jsx :人員配置表の表示ロジックとテーブル。
+  │  │  ShainView.jsx :社員名簿の表示ロジックとテーブル。
+  │  │  
+  │  └─common
+  │          ExcelHeader.jsx :ガントチャートのテーブル部分の日付ヘッダーを表示するコンポーネント。
+  │          
+  ├─constants
+  │      initialData.js :アプリケーションの初期データとなるCSV形式の文字列 (koujiCsvData など)。
+  │      uiConstants.js :セルの幅など、UI表示に関する共通の定数。
+  │      
+  ├─firebase
+  │      firebaseConfig.js :Firebaseの初期化と設定情報 (db, auth のエクスポート)
+  │      
+  ├─hooks
+  │      useProjects.js :Firestore から projects データを取得・更新するカスタムフック
+  │      useShain.js :Firestore から shainList データを取得・更新するカスタムフック
+  │      
+  └─utils
+          dataUtils.js :CSV文字列の解析やデータ形式の変換など、データ処理に関する関数 (parseCSV など)。
+          dateUtils.js :日付のフォーマットや期間計算など、日付処理に関する関数 (formatDate など)。
+          exportUtils.js :データをCSV形式でダウンロードするなど、エクスポート処理に関する関数。
 
 ```
 
