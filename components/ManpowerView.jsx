@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import { ExcelHeader } from './common/ExcelHeader.jsx';
-import { exportToCsv } from '../utils/exportUtils.js';
-import { formatDate } from '../utils/dateUtils.js';
+import { ExcelHeader } from 'components/common/ExcelHeader';
+import { exportToCsv } from 'utils/exportUtils';
+import { formatDate } from 'utils/dateUtils';
 
 export const ManpowerView = ({ projects, dateHeaders }) => {
     const rowCounter = useRef(4);
@@ -70,3 +70,4 @@ export const ManpowerView = ({ projects, dateHeaders }) => {
         </div>
     );
 };
+

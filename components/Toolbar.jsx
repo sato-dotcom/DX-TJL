@@ -1,5 +1,5 @@
 import React from 'react';
-import { exportToCsv } from '../utils/exportUtils.js';
+import { exportToCsv } from 'utils/exportUtils';
 
 /**
  * Renders the toolbar with buttons for seeding and exporting data.

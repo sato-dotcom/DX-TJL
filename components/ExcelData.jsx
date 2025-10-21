@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 // Import constants and utility functions from external files
-// NOTE: Corrected the import paths to be relative from the 'src' root directory
-// to resolve the compilation error.
-import { workCategoryColors, CELL_WIDTH } from './../constants/uiConstants.js';
-import { formatDate } from './../utils/dateUtils.js';
+// NOTE: Corrected the import paths to remove file extensions for proper alias resolution.
+import { workCategoryColors, CELL_WIDTH } from 'constants/uiConstants';
+import { formatDate } from 'utils/dateUtils';
 
 
 /**

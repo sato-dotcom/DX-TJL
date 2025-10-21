@@ -1,5 +1,5 @@
 import React from 'react';
-import { exportToCsv } from '../utils/exportUtils.js';
+import { exportToCsv } from 'utils/exportUtils';
 
 export const KoujiView = ({ projects, onAddProject, onEditProject, onDeleteProject }) => {
 
@@ -73,3 +73,4 @@ export const KoujiView = ({ projects, onAddProject, onEditProject, onDeleteProje
         </div>
     );
 };
+

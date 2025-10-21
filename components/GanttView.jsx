@@ -2,9 +2,9 @@ import React, { useRef } from 'react';
 
 // 他のコンポーネントも自己完結型に修正したため、
 // ここでのインポートが正しく解決されるはずです。
-import { ExcelHeader } from './common/ExcelHeader.jsx';
-import { Toolbar } from './Toolbar.jsx';
-import { ExcelData } from './ExcelData.jsx';
+import { ExcelHeader } from 'components/common/ExcelHeader';
+import { Toolbar } from 'components/Toolbar';
+import { ExcelData } from 'components/ExcelData';
 
 /**
  * The main view component for the Gantt chart.

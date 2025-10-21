@@ -1,7 +1,8 @@
-import React from 'react';
-import { exportToCsv } from '../utils/exportUtils.js';
+import React, { useRef } from 'react';
+import { exportToCsv } from 'utils/exportUtils';
 
-export const ShainView = ({ shainList, onAddShain, onEditShain, onDeleteShain }) => {
+export const ShainView = ({ shainList, onAddShain, onEditShain, onDeleteShain, onImportShain }) => {
+    const fileInputRef = useRef(null);
 
     const handleExport = () => {
         if (shainList.length === 0) {
@@ -14,9 +15,41 @@ export const ShainView = ({ shainList, onAddShain, onEditShain, onDeleteShain })
         exportToCsv('社員名簿.csv', headers, rows);
     };
 
+    const handleImportClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+            onImportShain(content);
+        };
+        reader.readAsText(file, 'UTF-8');
+        
+        // Reset file input value to allow re-uploading the same file
+        event.target.value = null;
+    };
+
     return (
         <div className="max-w-full mx-auto bg-white rounded-b-lg shadow-lg p-6">
             <div className="flex justify-end items-center mb-6">
+                 <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept=".csv"
+                    className="hidden"
+                />
+                <button 
+                    onClick={handleImportClick} 
+                    className="px-4 py-2 mr-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition shadow-sm"
+                >
+                    CSVインポート
+                </button>
                 <button 
                     onClick={onAddShain} 
                     className="px-4 py-2 mr-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition shadow-sm"
@@ -62,3 +95,4 @@ export const ShainView = ({ shainList, onAddShain, onEditShain, onDeleteShain })
         </div>
     );
 };
+
