@@ -1,20 +1,74 @@
 import { useState, useEffect } from 'react';
-import { db } from '../firebase/firebaseConfig.js';
+import { db } from 'firebase/firebaseConfig';
 import { collection, onSnapshot, doc, setDoc, getDoc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore';
+import { parseCSV } from 'utils/dataUtils';
 
 export const useShain = (user, projects) => {
     const [shainList, setShainList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // if (!user) return;
-
+        setIsLoading(true);
         const unsubscribe = onSnapshot(collection(db, "shain"), (snapshot) => {
             const fetchedList = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
             setShainList(fetchedList);
-        }, (error) => console.error("Error fetching shain list:", error));
+            setIsLoading(false);
+        }, (error) => {
+            console.error("Error fetching shain list:", error);
+            setIsLoading(false);
+        });
 
         return () => unsubscribe();
     }, [user]);
+
+    const handleImportShain = async (csvString) => {
+        if (!csvString) {
+            alert("CSVデータが空です。");
+            return;
+        }
+
+        const shainData = parseCSV(csvString);
+        if (!shainData || shainData.length === 0) {
+            alert("CSVの解析に失敗したか、データがありません。");
+            return;
+        }
+
+        if (!shainData[0]['社員番号']) {
+            alert("CSVに「社員番号」の列が見つかりません。ファイルを確認してください。");
+            return;
+        }
+        
+        const confirmation = window.confirm(`${shainData.length}件の社員データをインポートします。同じ社員番号が存在する場合は上書きされます。よろしいですか？`);
+        if (!confirmation) return;
+
+        const batch = writeBatch(db);
+        let importedCount = 0;
+
+        shainData.forEach(shain => {
+            if (shain.社員番号) {
+                const docRef = doc(db, "shain", shain.社員番号.trim());
+                // 空白のプロパティを削除する
+                const cleanedShain = Object.entries(shain).reduce((acc, [key, value]) => {
+                    if (value !== null && value !== undefined) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {});
+                batch.set(docRef, cleanedShain, { merge: true });
+                importedCount++;
+            }
+        });
+
+        try {
+            await batch.commit();
+            alert(`${importedCount}件の社員データのインポートが完了しました。`);
+        } catch (e) {
+            console.error("Error importing shain data:", e);
+            alert("インポート中にエラーが発生しました。コンソールを確認してください。");
+        }
+    };
+
 
     const handleAddShain = async () => {
         const shainId = prompt("新規社員番号を入力してください:");
@@ -114,5 +168,5 @@ export const useShain = (user, projects) => {
         }
     };
 
-    return { shainList, handleAddShain, handleEditShain, handleDeleteShain };
+    return { shainList, isLoading, handleAddShain, handleEditShain, handleDeleteShain, handleImportShain };
 };
