@@ -127,6 +127,8 @@ npm start
     
 ### 開発環境設定（エイリアス）
 
+- Firebase SDK v11.x 対応済み
+
 本プロジェクトでは import パスを簡潔にするため、Vite のエイリアスを設定しています。  
 そのため、`App.jsx` などから以下のように記述できます。
 
@@ -158,6 +160,111 @@ export default defineConfig({
 → 他の人が clone した場合は必ず vite.config.js を共有してください。
 • 	学習コスト：新しく参加する人には「エイリアスを使っている」ことを説明する必要があります。
 • 	移植性：もし別のビルド環境（例: Next.js, CRA）に移行する場合は、同様のエイリアス設定を追加する必要があります。
+
+## 🛠️ トラブルシューティング
+
+### Firebase import 解決エラー (Vite 環境)
+
+#### 症状
+
+Vite 開発サーバー起動時に以下のようなエラーが発生することがある：
+
+コード
+
+コピー
+
+```
+Failed to resolve import "firebase/app"
+Failed to resolve import "firebase/firestore"
+```
+
+Copy
+
+#### 原因
+
+- `vite.config.js` の alias 設定で `firebase` を `src/firebase` に割り当てていたため、
+    
+    - `import { db } from "firebase/firebaseConfig";` は意図通り動作するが、
+        
+    - `import { getFirestore } from "firebase/firestore";` など SDK 側の import まで `src/firebase/firestore` を探しに行ってしまう。
+        
+- 結果として npm の Firebase SDK と自作の `firebaseConfig.js` が衝突し、解決不能になる。
+    
+
+#### 対応方法
+
+1. **Firebase SDK のバージョンを安定版に固定**
+    
+    - v12 系は Vite との相性問題があるため、`firebase@11.10.0` を利用する。
+        
+    
+    bash
+    
+    コピー
+    
+    ```
+    npm install firebase@11
+    ```
+    
+    Copy
+    
+2. **vite.config.js の alias を修正**
+    
+    - `firebase` 全体を alias せず、`firebase/firebaseConfig` のみに限定する。
+        
+    
+    js
+    
+    コピー
+    
+    ```
+    // vite.config.js
+    import { defineConfig } from 'vite';
+    import react from '@vitejs/plugin-react';
+    import path from 'path';
+    
+    export default defineConfig({
+      plugins: [react()],
+      resolve: {
+        alias: [
+          { find: 'components', replacement: path.resolve(__dirname, './src/components') },
+          { find: 'hooks',      replacement: path.resolve(__dirname, './src/hooks') },
+          { find: 'utils',      replacement: path.resolve(__dirname, './src/utils') },
+          { find: 'constants',  replacement: path.resolve(__dirname, './src/constants') },
+    
+          // Firebase SDK と衝突しないように限定 alias
+          { find: /^firebase\/firebaseConfig$/, replacement: path.resolve(__dirname, './src/firebase/firebaseConfig.js') },
+        ],
+      },
+      optimizeDeps: {
+        include: ['firebase/app', 'firebase/firestore', 'firebase/auth'],
+      },
+    });
+    ```
+    
+    Copy
+    
+3. **キャッシュをクリアして再起動**
+    
+    bash
+    
+    コピー
+    
+    ```
+    rm -rf node_modules/.vite
+    npm run dev
+    ```
+    
+    Copy
+    
+
+#### 結果
+
+- `firebase/app`, `firebase/firestore`, `firebase/auth` は npm パッケージを正しく参照。
+    
+- `firebase/firebaseConfig` は自作の `src/firebase/firebaseConfig.js` を参照。
+    
+- Firebase SDK の import 解決エラーが解消し、開発サーバーが正常起動する。
 
 
 ## 📜 ライセンス
